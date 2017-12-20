@@ -1,12 +1,17 @@
-﻿namespace ActivityTracker.SqlServerProvider.Repositories
+﻿namespace ActivityTracker.SqlServerProvider
 {
     public class OperationDurationRepository : IOperationDurationRepository
     {
         public void Add(IOperationDuration operationDuration)
         {
+            if (operationDuration == null)
+            {
+                throw new System.ArgumentNullException(nameof(operationDuration));
+            }
+
             using (ActivityDbContext db = new ActivityDbContext())
             {
-                var durationEntity = new Entities.OperationDuration
+                var durationEntity = new OperationDuration
                 {
                     Action = operationDuration.Action,
                     Level = operationDuration.Level,

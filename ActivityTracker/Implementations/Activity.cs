@@ -15,6 +15,6 @@ namespace ActivityTracker
         public string Recipient { get; set; }
 
         public DateTime Time { get; set; }
-        public Dictionary<string, object> Values { get; set; }
+        public Dictionary<string, object> Values { get; }
     }
 }

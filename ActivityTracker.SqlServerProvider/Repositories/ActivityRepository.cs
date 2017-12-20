@@ -3,15 +3,20 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ActivityTracker.SqlServerProvider.Repositories
+namespace ActivityTracker.SqlServerProvider
 {
     public class ActivityRepository : IActivityRepository
     {
         public void Add(IActivity activity)
         {
+            if (activity == null)
+            {
+                throw new ArgumentNullException(nameof(activity));
+            }
+
             using (ActivityDbContext db = new ActivityDbContext())
             {
-                var activityEntity = new Entities.Activity
+                var activityEntity = new Activity
                 {
                     Action = activity.Action,
                     Level = activity.Level,
@@ -47,14 +52,22 @@ namespace ActivityTracker.SqlServerProvider.Repositories
 
                 foreach (var entity in entityList)
                 {
-                    activities.Add(new Activity
+                    var activity = new ActivityTracker.Activity
                     {
                         Action = entity.Action,
                         Level = entity.Level,
                         Recipient = entity.Recipient,
-                        Time = entity.Time,
-                        Values = entity.RelatedData != null ? JsonConvert.DeserializeObject<Dictionary<string, object>>(entity.RelatedData) : new Dictionary<string, object>()
-                    });
+                        Time = entity.Time
+                    };
+
+                    var values = entity.RelatedData != null ? JsonConvert.DeserializeObject<Dictionary<string, object>>(entity.RelatedData) : new Dictionary<string, object>();
+
+                    foreach (KeyValuePair<string, object> item in values)
+                    {
+                        activity.Values.Add(item.Key, item.Value);
+                    }
+
+                    activities.Add(activity);
                 }
                 return activities;
             }

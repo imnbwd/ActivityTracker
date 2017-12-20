@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ActivityTracker.SqlServerProvider.Entities
+namespace ActivityTracker.SqlServerProvider
 {
     public class OperationDuration
     {

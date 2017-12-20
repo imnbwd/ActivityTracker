@@ -4,8 +4,8 @@ namespace ActivityTracker.SqlServerProvider
 {
     public class ActivityDbContext : DbContext
     {
-        public DbSet<Entities.Activity> Activities { get; set; }
+        public DbSet<Activity> Activities { get; set; }
 
-        public DbSet<Entities.OperationDuration> OperationDurations { get; set; }
+        public DbSet<OperationDuration> OperationDurations { get; set; }
     }
 }

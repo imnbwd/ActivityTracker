@@ -1,15 +1,14 @@
 ﻿namespace ActivityTracker
 {
-    public class Constant
+    public static class Constant
     {
-        public const string ACTION_Exit = nameof(ACTION_Exit);
-        public const string ACTION_Startup = nameof(ACTION_Startup);
+        public const string AppExitAction = nameof(AppExitAction);
+        public const string AppStartupAction = nameof(AppStartupAction);
 
-        public const string ACTION_ViewLoaded = nameof(ACTION_ViewLoaded);
-        public const string ACTION_ViewUnloaded = nameof(ACTION_ViewUnloaded);
+        public const string ViewLoadedAction = nameof(ViewLoadedAction);
+        public const string ViewUnloadedAction = nameof(ViewUnloadedAction);
 
-        public const string ACTION_RuningApp = nameof(ACTION_RuningApp);
-        public const string ACTION_ShowingView = nameof(ACTION_ShowingView);
-
+        public const string RunningApp = nameof(RunningApp);
+        public const string ShowingView = nameof(ShowingView);
     }
 }

@@ -13,6 +13,6 @@ namespace ActivityTracker
 
         ActivityLevel Level { get; set; }
 
-        Dictionary<string, object> Values { get; set; }
+        Dictionary<string, object> Values { get; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace ActivityTracker
@@ -27,17 +28,16 @@ namespace ActivityTracker
             var exitActivity = new Activity
             {
                 Recipient = AppName,
-                Action = Constant.ACTION_Exit,
+                Action = Constant.AppExitAction,
                 Level = ActivityLevel.Application,
                 Time = DateTime.Now,
-                Values = null
             };
 
             _activityRepository.Add(exitActivity);
 
             var startActivity = _activityRepository
                 .GetActivities()
-                .Where(a => a.Recipient == AppName && a.Action == Constant.ACTION_Startup)
+                .Where(a => a.Recipient == AppName && a.Action == Constant.AppStartupAction)
                 .OrderByDescending(a => a.Time)
                 .FirstOrDefault();
 
@@ -48,7 +48,7 @@ namespace ActivityTracker
                 {
                     Level = ActivityLevel.Application,
                     Duration = duration,
-                    Action = Constant.ACTION_RuningApp
+                    Action = Constant.RunningApp
                 });
             }
 
@@ -63,10 +63,9 @@ namespace ActivityTracker
             _activityRepository.Add(new Activity
             {
                 Recipient = AppName,
-                Action = Constant.ACTION_Startup,
+                Action = Constant.AppStartupAction,
                 Level = ActivityLevel.Application,
                 Time = DateTime.Now,
-                Values = null
             });
         }
 
@@ -83,17 +82,26 @@ namespace ActivityTracker
 
             if (string.IsNullOrWhiteSpace(activity.Action))
             {
-                throw new ArgumentNullException(nameof(activity.Action));
+                throw new ArgumentException(nameof(activity.Action));
             }
 
-            _activityRepository.Add(new Activity
+            var ac = new Activity
             {
                 Recipient = activity.Recipient,
                 Level = ActivityLevel.Action,
                 Time = DateTime.Now,
                 Action = activity.Action,
-                Values = activity.Values
-            });
+            };
+
+            if (activity.Values != null)
+            {
+                foreach (KeyValuePair<string, object> item in activity.Values)
+                {
+                    ac.Values.Add(item.Key, item.Value);
+                }
+            }
+
+            _activityRepository.Add(activity);
         }
 
         public void TrackActivity(string action)
@@ -113,7 +121,18 @@ namespace ActivityTracker
                 throw new ArgumentNullException(nameof(action));
             }
 
-            TrackActivity(new Activity { Action = action, Values = values });
+            if (values == null)
+            {
+                throw new ArgumentNullException(nameof(values));
+            }
+
+            var activity = new Activity { Action = action };
+            foreach (KeyValuePair<string, object> item in values)
+            {
+                activity.Values.Add(item.Key, item.Value);
+            }
+
+            TrackActivity(activity);
         }
 
         public void TrackActivityEnd(string token)
@@ -160,9 +179,9 @@ namespace ActivityTracker
             });
         }
 
-        private string GenerateToken(string action, DateTime actionTime)
+        private static string GenerateToken(string action, DateTime actionTime)
         {
-            return action + actionTime.Ticks.ToString();
+            return action + actionTime.Ticks.ToString(CultureInfo.InvariantCulture);
         }
 
         #endregion TrackForAction
@@ -179,17 +198,16 @@ namespace ActivityTracker
             var endActivity = new Activity
             {
                 Recipient = viewName,
-                Action = Constant.ACTION_ViewUnloaded,
+                Action = Constant.ViewUnloadedAction,
                 Level = ActivityLevel.View,
                 Time = DateTime.Now,
-                Values = null
             };
 
             _activityRepository.Add(endActivity);
 
             var startActivity = _activityRepository
                     .GetActivities()
-                    .Where(a => a.Recipient == viewName && a.Action == Constant.ACTION_ViewLoaded)
+                    .Where(a => a.Recipient == viewName && a.Action == Constant.ViewLoadedAction)
                     .OrderByDescending(a => a.Time)
                     .FirstOrDefault();
 
@@ -199,7 +217,7 @@ namespace ActivityTracker
                 _operationDurationRepository.Add(new OperationDuration
                 {
                     Duration = duration,
-                    Action = Constant.ACTION_ShowingView,
+                    Action = Constant.ShowingView,
                     Level = ActivityLevel.View
                 });
             }
@@ -215,10 +233,9 @@ namespace ActivityTracker
             _activityRepository.Add(new Activity
             {
                 Recipient = viewName,
-                Action = Constant.ACTION_ViewLoaded,
+                Action = Constant.ViewLoadedAction,
                 Level = ActivityLevel.View,
                 Time = DateTime.Now,
-                Values = null
             });
         }
 
