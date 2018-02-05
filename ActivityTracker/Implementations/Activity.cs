@@ -15,6 +15,10 @@ namespace ActivityTracker
         public string Recipient { get; set; }
 
         public DateTime Time { get; set; }
+
+        /// <summary>
+        /// A dictionary contained some addtional info
+        /// </summary>
         public Dictionary<string, object> Values { get; }
     }
 }
